@@ -6,17 +6,24 @@ ratings = np.array([[8, 7, 9, 9],
                     [2, 2, 2, 6]])
 
 underline = np.zeros((len(ratings), len(ratings)))
-
-covered_rows = []
-covered_cols = []
-
-
 def jacobi():
+    print("Initial Ratings:")
+    print(ratings)
+    print()
     prep()
+    print("Prepped Ratings:")
+    print(ratings)
     while True:
+        for j in range(len(ratings)):
+            get_col_max(j)
         jacobi_konig()
-        if covered_rows + covered_cols == len(ratings):
+        print()
+        print("Underlines:")
+        print(underline)
+        if len(covered_rows) + len(covered_cols) == len(ratings):
             break
+        print()
+        print("Ratings:")
         jacobi_egervary()
         print(ratings)
 
@@ -39,33 +46,23 @@ def prep():
 
 def jacobi_konig():
     marked_rows, marked_cols = mark_matrix(underline)
+    global covered_rows, covered_cols
     covered_rows = marked_rows
     covered_cols = marked_cols
     
 def jacobi_egervary():
-    uncovered_max = float("-inf")
-    uncovered_max_j = 0
+    target = 0
+    target_j = 0
     for i in range(len(ratings)):
         for j in range(len(ratings)):
-            row_covered = False
-            col_covered = False
-            for k in covered_rows:
-                if k == i:
-                    row_covered = True
-            for k in covered_cols:
-                if k == j:
-                    col_covered = True
-            if not (row_covered or col_covered):
-                uncovered_max = max(uncovered_max, ratings[i][j])
-                uncovered_max_j = j
-    t = get_col_max(uncovered_max_j)[0] - uncovered_max
-    print(t)
+            if j not in covered_cols and i not in covered_rows:
+                col_max = get_col_max(j)[1]
+                if (col_max - ratings[i][j]) < (col_max - target):
+                    target = ratings[i][j]
+                    target_j = j
+    t = get_col_max(target_j)[0] - target
     for i in range(len(ratings)):
-        row_covered = False
-        for k in covered_rows:
-            if k == i:
-                row_covered = True
-        if not row_covered:
+        if i not in covered_rows:
             ratings[i,:] += t
 
 

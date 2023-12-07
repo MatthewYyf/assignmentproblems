@@ -6,12 +6,21 @@ ratings = np.array([[8, 7, 9, 9],
 					[2, 2, 2, 6]])
 
 def hungarian_method(ratings: np.array):
+	print("Ratings:")
+	print(ratings)
+	print()
 	W, v, u = prep(ratings)
+	print()
+	print("W:")
+	print(W)
 	while (True):
 		covered_rows, covered_cols = konig(W)
 		if len(covered_rows) + len(covered_cols) == len(W):
 			break
 		W, v, u = egervary(W, covered_rows, covered_cols, v, u)
+		print()
+		print("W:")
+		print(W)
 	return W, v, u
 
 def prep(ratings: np.array):
@@ -26,6 +35,8 @@ def prep(ratings: np.array):
 		for i in range(y):
 			W[i][j] = v[j] - ratings[i][j]
 	# u_i = -min(W_i)
+	print("W:")
+	print(W)
 	u = np.zeros(y)
 	for i in range(y):
 		u[i] = -min(W[i, :])
@@ -109,4 +120,3 @@ def egervary(W, covered_rows, covered_cols, v, u):
 	return W, u, v
 
 W, u, v = hungarian_method(ratings)
-print(W)
